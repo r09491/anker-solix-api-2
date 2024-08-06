@@ -23,9 +23,9 @@ import sys
 
 from aiohttp import ClientSession
 from aiohttp.client_exceptions import ClientError
-from api import api, errors  # type: ignore  # noqa: PGH003
-from api.types import SolarbankUsageMode
-import common  # type: ignore  # noqa: PGH003
+from anker_solix_api import api, errors  # type: ignore  # noqa: PGH003
+from anker_solix_api.types import SolarbankUsageMode
+from anker_solix_api import common  # type: ignore  # noqa: PGH003
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.StreamHandler(sys.stdout))
@@ -79,7 +79,8 @@ async def main() -> (  # noqa: C901 # pylint: disable=too-many-locals,too-many-b
             or int(selection) > len(exampleslist)
         ):
             return False
-        if (selection := int(selection)) == 0:
+        selection = int(selection)
+        if selection == 0:
             use_file = False
         else:
             use_file = True
@@ -334,7 +335,8 @@ async def main() -> (  # noqa: C901 # pylint: disable=too-many-locals,too-many-b
                 if energy_stats:
                     unit = "kWh"
                     for site_id, site in myapi.sites.items():
-                        if (energy:=site.get("energy_details") or {}):
+                        energy =site.get("energy_details") or {}
+                        if energy:
                             today :dict = energy.get("today")
                             yesterday :dict = energy.get("last_period")
                             CONSOLE.info(f"Energy details for System {(site.get('site_info') or {}).get('site_name','Unknown')} (Site ID: {site_id}):")
@@ -344,11 +346,13 @@ async def main() -> (  # noqa: C901 # pylint: disable=too-many-locals,too-many-b
                             CONSOLE.info(
                                 f"{'Solar Energy':<{col1}}: {today.get('solar_production','-.--'):>5} {unit:<{col2-6}} {'Solar Energy':<{col3}}: {yesterday.get('solar_production','-.--'):>5} {unit}"
                             )
-                            if value := today.get('solar_production_pv1'):
+                            value = today.get('solar_production_pv1')
+                            if value:
                                 CONSOLE.info(
                                     f"{'Solar Ch 1/2':<{col1}}: {today.get('solar_production_pv1','-.--'):>5} / {today.get('solar_production_pv2','-.--'):>4} {unit:<{col2-13}} {'Solar Ch 1/2':<{col3}}: {yesterday.get('solar_production_pv1','-.--'):>5} / {yesterday.get('solar_production_pv2','-.--'):>4} {unit}"
                                 )
-                            if value := today.get('solar_production_pv3'):
+                            value = today.get('solar_production_pv3')
+                            if value:
                                 CONSOLE.info(
                                     f"{'Solar Ch 3/4':<{col1}}: {today.get('solar_production_pv3','-.--'):>5} / {today.get('solar_production_pv4','-.--'):>4} {unit:<{col2-13}} {'Solar Ch 3/4':<{col3}}: {yesterday.get('solar_production_pv3','-.--'):>5} / {yesterday.get('solar_production_pv4','-.--'):>4} {unit}"
                                 )
@@ -358,27 +362,33 @@ async def main() -> (  # noqa: C901 # pylint: disable=too-many-locals,too-many-b
                             CONSOLE.info(
                                 f"{'SB Discharged':<{col1}}: {today.get('solarbank_discharge','-.--'):>5} {unit:<{col2-6}} {'SB Discharged':<{col3}}: {yesterday.get('solarbank_discharge','-.--'):>5} {unit}"
                             )
-                            if value := today.get('battery_to_home'):
+                            value = today.get('battery_to_home')
+                            if value:
                                 CONSOLE.info(
                                     f"{'House Feed':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'House Feed':<{col3}}: {yesterday.get('battery_to_home','-.--'):>5} {unit}"
                                 )
-                            if value := today.get('home_usage'):
+                            value = today.get('home_usage')
+                            if value:
                                 CONSOLE.info(
                                     f"{'House Usage':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'House Usage':<{col3}}: {yesterday.get('home_usage','-.--'):>5} {unit}"
                                 )
-                            if value := today.get('grid_to_home'):
+                            value = today.get('grid_to_home')
+                            if value:
                                 CONSOLE.info(
                                     f"{'Grid Import':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'Grid Import':<{col3}}: {yesterday.get('grid_to_home','-.--'):>5} {unit}"
                                 )
-                            if value := today.get('solar_to_grid'):
+                            value = today.get('solar_to_grid')
+                            if value:
                                 CONSOLE.info(
                                     f"{'Grid Export':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'Grid Export':<{col3}}: {yesterday.get('solar_to_grid','-.--'):>5} {unit}"
                                 )
-                            if value := today.get('ac_socket'):
+                            value = today.get('ac_socket')
+                            if value:
                                 CONSOLE.info(
                                     f"{'AC Socket':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'AC Socket':<{col3}}: {yesterday.get('ac_socket','-.--'):>5} {unit}"
                                 )
-                            if value := today.get('smartplugs_total'):
+                            value = today.get('smartplugs_total')
+                            if value:
                                 CONSOLE.info(
                                     f"{'Smartplugs':<{col1}}: {value or '-.--':>5} {unit:<{col2-6}} {'Smartplugs':<{col3}}: {yesterday.get('smartplugs_total','-.--'):>5} {unit}"
                                 )
@@ -403,11 +413,10 @@ async def main() -> (  # noqa: C901 # pylint: disable=too-many-locals,too-many-b
                                 CONSOLE.info("(%s) %s", idx, filename)
                             while use_file:
                                 selection = input(f"Enter source file number (1-{len(exampleslist)}): ")
-                                if (
-                                    selection.isdigit()
-                                    and 1 <= (selection := int(selection)) <= len(exampleslist)
-                                ):
-                                    break
+                                if selection.isdigit():
+                                    selection = int(selection)
+                                    if 1 <= selection <= len(exampleslist):
+                                        break
                             testfolder = exampleslist[selection - 1]
                             myapi.testDir(testfolder)
                             break

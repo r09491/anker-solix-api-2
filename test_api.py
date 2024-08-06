@@ -10,12 +10,12 @@ import os
 import sys
 
 from aiohttp import ClientSession
-from api import api
-import common
+from anker_solix_api import api
+from anker_solix_api import common
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.StreamHandler(sys.stdout))
-# _LOGGER.setLevel(logging.DEBUG)    # enable for detailed API output
+##_LOGGER.setLevel(logging.DEBUG)    # enable for detailed API output
 CONSOLE: logging.Logger = common.CONSOLE
 
 TESTAUTHENTICATE = False

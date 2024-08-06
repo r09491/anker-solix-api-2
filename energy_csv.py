@@ -22,8 +22,7 @@ import os
 import sys
 
 from aiohttp import ClientSession
-from api import api  # type: ignore  # noqa: PGH003
-import common  # type: ignore  # noqa: PGH003
+from anker_solix_api import api, common  # type: ignore  # noqa: PGH003
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.StreamHandler(sys.stdout))

@@ -4,6 +4,7 @@
 *.egg-info
 */build/*
 */dist/*
+build/*
 
 # misc
 .coverage
@@ -16,3 +17,6 @@ coverage.xml
 /node_modules/
 /client.py
 /daily_energy_*.csv
+
+*~
+*.*~

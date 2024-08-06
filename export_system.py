@@ -29,8 +29,8 @@ import sys
 
 from aiohttp import ClientSession
 from aiohttp.client_exceptions import ClientError
-from api import api, errors  # type: ignore  # noqa: PGH003
-import common  # type: ignore  # noqa: PGH003
+from anker_solix_api import api, errors, common  # type: ignore  # noqa: PGH003
+
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.StreamHandler(sys.stdout))
@@ -68,7 +68,7 @@ def randomize(val, key: str = "") -> str:
             if ":" in val:
                 RANDOMDATA.update({temp: randomstr})  # save also key value without :
                 randomstr = ":".join(
-                    a + b for a, b in zip(randomstr[::2], randomstr[1::2], strict=False)
+                    a + b for a, b in zip(randomstr[::2], randomstr[1::2])
                 )
         elif "_id" in key:
             for part in val.split("-"):
@@ -107,7 +107,7 @@ def randomize(val, key: str = "") -> str:
 
 def check_keys(data):
     """Recursive traversal of complex nested objects to randomize value for certain keys."""
-    if isinstance(data, int | str):
+    if isinstance(data, int) or isinstance(data, str):
         return data
     for k, v in data.copy().items():
         if isinstance(v, dict):
@@ -134,7 +134,7 @@ def check_keys(data):
 
 def export(
     filename: str,
-    d: dict | None = None,
+    d: dict = None,
     skip_randomize: bool = False,
     randomkeys: bool = False,
 ) -> None:
@@ -437,26 +437,24 @@ async def main() -> bool:  # noqa: C901 # pylint: disable=too-many-branches,too-
                         "Exporting site energy data for solar_production PV%s...", ch
                     )
                     try:
+                        data = await myapi.request(
+                            "post",
+                            api.API_ENDPOINTS["energy_analysis"],  # noqa: SLF001
+                            json={
+                                "site_id": siteId,
+                                "device_sn": "",
+                                "type": "week",
+                                "device_type": f"solar_production_pv{ch}",
+                                "start_time": (
+                                    datetime.today() - timedelta(days=1)
+                                ).strftime("%Y-%m-%d"),
+                                "end_time": datetime.today().strftime(
+                                    "%Y-%m-%d"
+                                ),
+                            },
+                        )
                         if (
-                            not (
-                                data := await myapi.request(
-                                    "post",
-                                    api.API_ENDPOINTS["energy_analysis"],  # noqa: SLF001
-                                    json={
-                                        "site_id": siteId,
-                                        "device_sn": "",
-                                        "type": "week",
-                                        "device_type": f"solar_production_pv{ch}",
-                                        "start_time": (
-                                            datetime.today() - timedelta(days=1)
-                                        ).strftime("%Y-%m-%d"),
-                                        "end_time": datetime.today().strftime(
-                                            "%Y-%m-%d"
-                                        ),
-                                    },
-                                )
-                                or {}
-                            )
+                            not data 
                             or not data.get("data")
                             or {}
                         ):
