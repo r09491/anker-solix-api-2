@@ -3,8 +3,8 @@ from setuptools import setup
 with open("README.md", 'r') as f:
     long_description = f.read()
     
-setup(name='anker-solix-api-2',
-      version='2.0.0.1',
+setup(name='anker-solix-api',
+      version='2.1.0.1',
       description='API for the Anker Solix Solarbank',
       url='https://github.com/r09491/anker-solix-api-2.git',
       author='r09491',

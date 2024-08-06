@@ -36,7 +36,7 @@ async def main() -> None:
                 insert_slot=SolarbankTimeslot(
                     start_time=datetime.strptime("00:00", "%H:%M"),
                     end_time=datetime.strptime("23:59", "%H:%M"),
-                    appliance_load=250,
+                    appliance_load=110,
                     device_load=None,
                     allow_export=None,
                     charge_priority_limit=None,

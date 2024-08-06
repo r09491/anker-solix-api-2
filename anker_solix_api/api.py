@@ -92,11 +92,12 @@ class AnkerSolixApi:
             os.path.dirname(__file__), "..", "examples", "example1"
         )
         self._retry_attempt: bool = False  # Flag for retry after any token error
+        home = os.path.expanduser('~')
         os.makedirs(
-            os.path.join(os.path.dirname(__file__), "authcache"), exist_ok=True
+            os.path.join(home, ".authcache"), exist_ok=True
         )  # ensure folder for authentication caching exists
         self._authFile: str = os.path.join(
-            os.path.dirname(__file__), "authcache", f"{email}.json"
+            home, ".authcache", f"{email}.json"
         )  # filename for authentication cache
         self._authFileTime: float = 0
         # initialize logger for object
@@ -150,7 +151,7 @@ class AnkerSolixApi:
 
     def _md5(self, text: str) -> str:
         """Return MD5 hash in hex for given string."""
-        h = hashes.Hash(hashes.MD5())
+        h = hashes.Hash(hashes.MD5(), default_backend())
         h.update(text.encode("utf-8"))
         return h.finalize().hex()
 
