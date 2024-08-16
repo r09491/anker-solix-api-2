@@ -17,7 +17,7 @@ This is an experimental Python library for Anker Solix Power devices (Solarbank,
 
 # Python Versions
 
-The [original library](https://github.com/thomluther/anker-solix-api/blob/main/LICENSE) is currently supported on
+The [original library](https://github.com/thomluther/anker-solix-api) is currently supported on
 
 - Python 3.11
 - Python 3.12
