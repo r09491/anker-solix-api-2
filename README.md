@@ -17,19 +17,25 @@ This is an experimental Python library for Anker Solix Power devices (Solarbank,
 
 # Python Versions
 
-The library is currently supported on
+The [original library](https://github.com/thomluther/anker-solix-api/blob/main/LICENSE) is currently supported on
 
 - Python 3.11
 - Python 3.12
 
+This repository is modified to run on a Raspberry Pi with 
+
+- Python 3.7
+
+It only supports the ANker Solarbank 1.
+
 # Required libraries
 
-This project uses `pipenv` for Python dependency management
+This project does not use `pipenv` for Python dependency management. It uses `pip`.
+
+In the root project diirectory run
 
 ```bash
-pip install pipenv
-pipenv sync -d
-pipenv run python [...]
+pip install .
 ```
 
 # Anker Account Information
@@ -57,8 +63,8 @@ import json
 import logging
 
 from aiohttp import ClientSession
-from api import api
-import common
+from anker_solix_api import api
+from anker_solix_api import common
 
 _LOGGER: logging.Logger = logging.getLogger(__name__)
 # _LOGGER.setLevel(logging.DEBUG)    # enable for detailed Api output
@@ -112,7 +118,7 @@ Those json files can also be used to develop/debug the Api for system constellat
 ## test_api.py
 
 ```
-> pipenv run ./test_api.py
+> ./test_api.py
 ```
 
 Example exec module that can be used to explore and test AnkerSolixApi methods or direct endpoint requests with parameters. You can modify this module as required. Optionally you can create your own test file called `client.py` starting with the usage example above. This file is not indexed and added to gitignore, so your local changes are not tracked for git updates/commits.
@@ -128,7 +134,7 @@ _CREDENTIALS = {
 ## export_system.py
 
 ```
-> pipenv run ./export_system.py
+> ./export_system.py
 ```
 
 Example exec module to use the Anker Api for export of defined system data and device details.
@@ -145,7 +151,7 @@ You should preferably run the export_system with the owner account of the site. 
 ## solarbank_monitor.py
 
 ```
-> pipenv run ./solarbank_monitor.py
+> ./solarbank_monitor.py
 ```
 
 Example exec module to use the Anker Api for continuously querying and displaying important solarbank parameters.
@@ -161,7 +167,7 @@ Note: When the system owning account is used, more details for the solarbank can
 ## energy_csv.py
 
 ```
-> pipenv run ./energy_csv.py
+> ./energy_csv.py
 ```
 
 Example exec module to use the Anker Api for export of daily Energy Data.
